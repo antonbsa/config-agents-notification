@@ -77,6 +77,12 @@ managed_by_section = {
     name: {key for key in (top_key(line) for line in entries) if key}
     for name, entries in managed_sections.items()
 }
+legacy_managed_by_section = {
+    "features": {"hooks"},
+    "hooks": {"PermissionRequest", "Stop"},
+}
+for name, keys in legacy_managed_by_section.items():
+    managed_by_section.setdefault(name, set()).update(keys)
 
 out = []
 section = None
@@ -120,6 +126,10 @@ while i < len(lines):
         continue
 
     if "/home/antonbsa/local/bin/codex-notify" in line and "notify" in line:
+        i += 1
+        continue
+
+    if line.strip() in {"# Managed by install-ai-notifications.sh", "# Managed by install.sh"}:
         i += 1
         continue
 

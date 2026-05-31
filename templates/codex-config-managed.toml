@@ -1,16 +1,5 @@
 # Managed by install.sh
 notify = ["__CODEX_NOTIFY__"]
 
-[features]
-hooks = true
-
 [tui]
 notifications = ["agent-turn-complete", "approval-requested"]
-
-[hooks]
-PermissionRequest = [
-  { matcher = "*", hooks = [{ type = "command", command = "__CODEX_NOTIFY__", statusMessage = "Sending Codex approval notification" }] },
-]
-Stop = [
-  { matcher = "*", hooks = [{ type = "command", command = "__CODEX_NOTIFY__", statusMessage = "Sending Codex completion notification" }] },
-]

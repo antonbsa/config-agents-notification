@@ -65,8 +65,8 @@ Clone the repo, edit templates if desired, then run:
 
 Most user-facing behavior lives in `templates/`:
 
-- `templates/ai-notify.sh`: common completion notification helper.
-- `templates/claude-notify-filter.py`: Claude Code permission notification filter.
+- `templates/ai-notify.sh`: common desktop notification helper.
+- `templates/claude-notify-filter.py`: Claude Code notification handler.
 - `templates/codex-notify.sh`: Codex hook handler.
 - `templates/claude-settings-hooks.json`: managed Claude hooks.
 - `templates/codex-config-managed.toml`: managed Codex TOML entries.
@@ -88,7 +88,9 @@ It also updates these config files, creating timestamped backups first when they
 
 ## Test Mode
 
-`--test` does not install, overwrite, or create config files. It validates an existing installation and sends two simulated notifications:
+`--test` does not install, overwrite, or create config files. It validates an existing installation and sends simulated notifications:
 
 - one Codex completion notification;
-- one Claude Code permission notification.
+- one Codex approval notification;
+- one Claude completion notification;
+- one Claude permission notification.

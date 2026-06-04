@@ -42,7 +42,6 @@ except Exception as exc:
     sys.exit(1)
 PY
 
-  require_config_reference "$CLAUDE_SETTINGS" "$AI_NOTIFY"
   require_config_reference "$CLAUDE_SETTINGS" "$CLAUDE_FILTER"
   require_config_reference "$CODEX_CONFIG" "$CODEX_NOTIFY"
 }
@@ -57,8 +56,10 @@ run_tests() {
     log_lines_before="$(wc -l < "$CODEX_LOG")"
   fi
 
-  "$CODEX_NOTIFY" "{\"type\":\"agent-turn-complete\",\"cwd\":\"$test_cwd\",\"last-assistant-message\":\"Teste de fim de prompt Codex\"}"
-  printf '%s' "{\"notification_type\":\"permission_prompt\",\"message\":\"Teste de permissao Claude Code\",\"cwd\":\"$test_cwd\"}" | python3 "$CLAUDE_FILTER"
+  "$CODEX_NOTIFY" "{\"type\":\"agent-turn-complete\",\"cwd\":\"$test_cwd\",\"last_assistant_message\":\"Codex completion test\"}"
+  "$CODEX_NOTIFY" "{\"type\":\"approval-requested\",\"cwd\":\"$test_cwd\",\"message\":\"Codex approval test\"}"
+  printf '%s' "{\"hook_event_name\":\"Stop\",\"last_assistant_message\":\"Claude completion test\",\"cwd\":\"$test_cwd\"}" | python3 "$CLAUDE_FILTER"
+  printf '%s' "{\"notification_type\":\"permission_prompt\",\"message\":\"Claude approval test\",\"cwd\":\"$test_cwd\"}" | python3 "$CLAUDE_FILTER"
 
   if [[ -f "$CODEX_LOG" ]]; then
     log "New Codex log entries:"

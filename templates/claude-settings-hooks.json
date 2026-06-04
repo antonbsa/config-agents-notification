@@ -5,7 +5,7 @@
       "hooks": [
         {
           "type": "command",
-          "command": "__AI_NOTIFY__ 'Claude Code' 'Prompt finalizado' 'normal' 'utilities-terminal'"
+          "command": "python3 __CLAUDE_FILTER__"
         }
       ]
     }

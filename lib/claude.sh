@@ -5,7 +5,7 @@ write_ai_notify() {
 }
 
 write_claude_filter() {
-  log "Installing Claude permission notification filter: $CLAUDE_FILTER"
+  log "Installing Claude notification handler: $CLAUDE_FILTER"
   write_rendered_template "claude-notify-filter.py" "$CLAUDE_FILTER"
   python3 -m py_compile "$CLAUDE_FILTER"
 }

@@ -21,31 +21,26 @@ jq_read() {
 
 event="$(jq_read '.hook_event_name // .type' 'codex')"
 cwd="$(jq_read '.cwd' "$(pwd)")"
-message="$(jq_read '.message // .reason // .["last-assistant-message"] // .statusMessage' '')"
-tool="$(jq_read '.tool_name // .tool' '')"
+message="$(jq_read '.message // .reason // .tool_input.description // .statusMessage' '')"
+last_assistant_message="$(jq_read '.last_assistant_message // .["last-assistant-message"]' '')"
 
 if [[ -z "$event" ]]; then event="codex"; fi
 if [[ -z "$cwd" ]]; then cwd="$(pwd)"; fi
-if [[ -z "$message" ]]; then message="Codex precisa da sua autorização"; fi
+case "$event" in
+  PermissionRequest|approval-requested)
+    if [[ -z "$message" ]]; then message="Codex needs your approval"; fi
+    ;;
+esac
 
-project="$(basename "$cwd")"
 mkdir -p "$(dirname "$LOG_FILE")"
-printf '%s\t%s\t%s\t%s\n' "$(date -Is)" "$event" "$cwd" "$message" >> "$LOG_FILE"
+printf '%s\t%s\t%s\t%s\n' "$(date -Is)" "$event" "$cwd" "${last_assistant_message:-$message}" >> "$LOG_FILE"
 
 case "$event" in
   Stop|agent-turn-complete)
-    cd "$cwd" 2>/dev/null || true
-    exec "$AI_NOTIFY" "Codex" "Prompt finalizado" "normal" "utilities-terminal"
+    exec "$AI_NOTIFY" "Codex" "finished" "normal" "utilities-terminal" "$cwd" "$last_assistant_message"
     ;;
   PermissionRequest|approval-requested)
-    if [[ -n "$tool" && "$message" == "Codex precisa da sua autorização" ]]; then
-      message="Codex precisa da sua autorização para usar: $tool"
-    fi
-    notify-send "[$project] Aguardando permissão" "$message" \
-      --app-name="Codex" \
-      --icon="dialog-warning" \
-      --urgency="critical" \
-      --expire-time=0
+    exec "$AI_NOTIFY" "Codex" "waiting for approval" "critical" "dialog-warning" "$cwd" ""
     ;;
   *)
     exit 0
